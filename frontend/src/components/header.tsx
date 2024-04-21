@@ -7,7 +7,7 @@ export const Header = () => {
 
   return (
     <div className="bg-blue-800 px-4 py-6">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between">
+      <div className="container mx-auto flex flex-col items-center md:items-start md:flex-row justify-between">
         <span className="text-2xl text-white font-bold tracking-tight">
           <Link to="/">MyHolidays.com</Link>
         </span>

@@ -50,3 +50,31 @@ test("should allow user to add a hotel", async ({ page }) => {
 
   await expect(page.getByText("Hotel Created!")).toBeVisible();
 });
+
+test("should display hotels", async ({ page }) => {
+  await page.goto(`${UI_URL}/my-hotels`);
+
+  await expect(page.getByRole("heading", { name: "My Hotels" })).toBeVisible();
+
+  await expect(page.getByRole("link", { name: "Add Hotel" })).toBeVisible();
+
+  await expect(
+    page.getByRole("heading", { name: "Riad Al-Qurtubi" })
+  ).toBeVisible();
+
+  await expect(
+    page.getByText("Just 1.2 miles from Tangier Municipal Beach and a 7-minute")
+  ).toBeVisible();
+
+  await expect(page.getByText("Tangier, Morocco")).toBeVisible();
+
+  await expect(page.getByText("Beach Resort")).toBeVisible();
+
+  await expect(page.getByText("$150 per night")).toBeVisible();
+
+  await expect(page.getByText("2 adults, 3 children")).toBeVisible();
+
+  await expect(page.getByText("3 Star Rating")).toBeVisible();
+
+  await expect(page.getByRole("link", { name: "View Details" })).toBeVisible();
+});

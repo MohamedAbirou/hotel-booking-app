@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
-import Hotel, { HotelType } from "../models/hotel"; // Import your Hotel model
+import Hotel from "../models/hotel"; // Import your Hotel model
 import { checkSession } from "../middleware/auth";
 import { createHotelValidationSchema } from "../utils/validationSchemas";
 import { checkSchema } from "express-validator";
@@ -11,6 +11,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import "../config/firebaseConfig";
+import { HotelType } from "../shared/types";
 
 const router = express.Router();
 const storage = getStorage();
@@ -21,7 +22,7 @@ const upload = multer({
   },
 });
 
-// /api/my-hotels
+// /api/add-hotel (add a hotel)
 router.post(
   "/",
   checkSession,
@@ -65,8 +66,6 @@ router.post(
       const hotel = new Hotel(newHotel);
       await hotel.save();
 
-      console.log("Saved hotel data:", hotel); // Log saved hotel data
-
       //* Return a success response
       res.status(201).send(hotel);
     } catch (error) {
@@ -76,5 +75,17 @@ router.post(
     }
   }
 );
+
+// /api/my-hotels (display hotels per user)
+router.get("/", checkSession, async (req: Request, res: Response) => {
+  try {
+    const hotels = await Hotel.find({ userId: req.userId });
+
+    res.status(201).json(hotels);
+  } catch (error) {
+    console.log("Error getting hotels: ", error);
+    res.status(500).json({ message: "Error fetching hotels" });
+  }
+});
 
 export default router;
