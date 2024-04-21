@@ -1,20 +1,18 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import "dotenv/config";
+
 import userRoutes from "./routes/users";
 import authRoutes from "./routes/auth";
+import myHotelRoutes from "./routes/my-hotels";
+
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import path from "path";
 
-// connect to mongodb test database
-mongoose
-  .connect(process.env.MONGODB_CONNECTION_STRING as string)
-  .catch((error) => {
-    console.log(error);
-  });
+import "dotenv/config";
+import "./config/connection";
 
 // Initialize the express app
 const app = express();
@@ -62,6 +60,11 @@ app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 // API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/my-hotels", myHotelRoutes);
+
+app.get("*", (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+});
 
 app.listen(7000, () => {
   console.log("Server running on http://localhost:7000");

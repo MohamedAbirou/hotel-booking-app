@@ -3,6 +3,7 @@ import { checkSchema, validationResult } from "express-validator";
 import { userLoginValidationSchema } from "../utils/validationSchemas";
 import User from "../models/user";
 import bcrypt from "bcryptjs";
+import { checkSession } from "../middleware/auth";
 
 declare module "express-session" {
   export interface SessionData {
@@ -65,12 +66,8 @@ router.post(
 //   res.status(200).send({ userId: req.userId });
 // });
 
-router.get("/check-session", (req: Request, res: Response) => {
-  if (req.session.userId) {
-    res.status(200).send({ userId: req.session.userId });
-  } else {
-    res.status(401).json({ message: "Unauthorized" });
-  }
+router.get("/check-session", checkSession, (req: Request, res: Response) => {
+  res.status(200).send({ userId: req.userId });
 });
 
 router.post("/logout", (req: Request, res: Response) => {

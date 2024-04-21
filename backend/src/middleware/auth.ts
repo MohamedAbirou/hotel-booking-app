@@ -27,3 +27,16 @@ export const verifyToken = (
     res.status(500).json({ message: "Something went wrong!" });
   }
 };
+
+export const checkSession = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.session.userId) {
+    req.userId = req.session.userId;
+    next();
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+};
