@@ -3,6 +3,7 @@ import path from "path";
 
 const UI_URL = "http://localhost:5173";
 
+// Sign in before managing hotels
 test.beforeEach(async ({ page }) => {
   await page.goto(UI_URL);
 
@@ -20,6 +21,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.getByText("Sign in successful!")).toBeVisible();
 });
 
+// add a hotel
 test("should allow user to add a hotel", async ({ page }) => {
   await page.goto(`${UI_URL}/add-hotel`);
 
@@ -51,6 +53,7 @@ test("should allow user to add a hotel", async ({ page }) => {
   await expect(page.getByText("Hotel Created!")).toBeVisible();
 });
 
+// Fetch hotels and display them
 test("should display hotels", async ({ page }) => {
   await page.goto(`${UI_URL}/my-hotels`);
 
@@ -74,7 +77,37 @@ test("should display hotels", async ({ page }) => {
 
   await expect(page.getByText("2 adults, 3 children")).toBeVisible();
 
-  await expect(page.getByText("3 Star Rating")).toBeVisible();
+  await expect(page.getByText("3 Star Rating").first()).toBeVisible();
 
-  await expect(page.getByRole("link", { name: "View Details" })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "View Details" }).first()
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Add Hotel" })).toBeVisible();
+});
+
+// Update a hotel
+test("should allow user to update a hotel", async ({ page }) => {
+  await page.goto(`${UI_URL}/my-hotels`);
+
+  await page.getByRole("link", { name: "View Details" }).first().click();
+
+  await expect(page.getByText("Edit Hotel")).toBeVisible();
+
+  await page.waitForSelector("[name=name]", { state: "attached" });
+  await expect(page.locator("[name=name]")).toHaveValue("Riad Al-Qurtubi");
+  await page.locator("[name=name]").fill("Riad Al-Qurtubi UPDATED");
+
+  await page.getByRole("button", { name: "Save" }).click();
+
+  await expect(page.getByText("Hotel Updated!")).toBeVisible();
+
+  await page.reload();
+
+  await expect(page.locator("[name=name]")).toHaveValue(
+    "Riad Al-Qurtubi UPDATED"
+  );
+
+  await page.locator("[name=name]").fill("Riad Al-Qurtubi");
+
+  await page.getByRole("button", { name: "Save" }).click();
 });

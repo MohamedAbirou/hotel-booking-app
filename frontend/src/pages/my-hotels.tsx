@@ -18,14 +18,6 @@ const MyHotels = () => {
     }
   );
 
-  if (!hotelData) {
-    return (
-      <div className="flex items-center justify-center">
-        <span className="text-2xl font-bold">No Hotels found.</span>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-5">
       <span className="flex justify-between">
@@ -38,6 +30,11 @@ const MyHotels = () => {
         </Link>
       </span>
       <div className="flex flex-col gap-8">
+        {hotelData?.length === 0 && (
+          <div className="flex items-center justify-center mt-5">
+            <span className="text-xl font-bold">No Hotels found.</span>
+          </div>
+        )}
         {hotelData?.map((hotel) => (
           <div
             key={hotel._id}
@@ -63,7 +60,7 @@ const MyHotels = () => {
               </div>
               <div className="border border-slate-300 rounded-md px-3 py-2 w-max flex items-center">
                 <BiStar className="mr-1" />
-                {hotel.starRating} Star Rating
+                <h1 className="text-md">{hotel.starRating} Star Rating</h1>
               </div>
             </div>
             <span className="flex justify-end">

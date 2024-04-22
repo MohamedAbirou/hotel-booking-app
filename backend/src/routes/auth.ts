@@ -37,22 +37,21 @@ router.post(
         return res.status(400).json({ message: "Invalid Credentials" });
       }
 
+      // If the user has an old session, destroy it
+      if (user.sessionId) {
+        req.sessionStore.destroy(user.sessionId, (err) => {
+          if (err) {
+            console.log("Error destroying old session:", err);
+          }
+        });
+      }
+
       // Store user ID in the session
       req.session.userId = user.id;
 
-      // const token = jwt.sign(
-      //   { userId: user.id },
-      //   process.env.JWT_SECRET_KEY as string,
-      //   {
-      //     expiresIn: "1d",
-      //   }
-      // );
-
-      // res.cookie("auth_token", token, {
-      //   httpOnly: true,
-      //   secure: process.env.NODE_ENV === "production",
-      //   maxAge: 86400000,
-      // });
+      // Store the new session ID in the user document
+      user.sessionId = req.sessionID;
+      await user.save();
 
       res.status(200).json({ userId: user._id });
     } catch (error) {

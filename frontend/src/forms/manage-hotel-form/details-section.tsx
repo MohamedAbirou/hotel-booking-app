@@ -1,15 +1,21 @@
 import { useFormContext } from "react-hook-form";
 import { HotelFormData } from "./manage-hotel-form";
+import { useLocation } from "react-router-dom";
 
 export const DetailsSection = () => {
+  const location = useLocation();
+
   const {
     register,
     formState: { errors },
   } = useFormContext<HotelFormData>();
 
+  const heading =
+    location.pathname === "/add-hotel" ? "Add Hotel" : "Edit Hotel";
+
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-bold mb-3">Add Hotel</h1>
+      <h1 className="text-3xl font-bold mb-3">{heading}</h1>
       <label htmlFor="name" className="text-gray-700 text-sm font-bold flex-1">
         Name
         <input

@@ -24,6 +24,9 @@ router.post(
         return res.status(400).json({ message: "User already exists!" });
 
       user = new User(req.body);
+
+      // Store the new session ID in the user document
+      user.sessionId = req.sessionID;
       await user.save();
 
       // Log in the user by setting the userId in the session
