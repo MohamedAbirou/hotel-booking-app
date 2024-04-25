@@ -10,15 +10,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   const pathname = location.pathname;
 
-  const login = pathname === "/sign-in";
-  const register = pathname === "/register";
-  const edit = pathname === `/edit-hotel/${hotelId}`;
-  const add = pathname === "/add-hotel";
+  const paths =
+    pathname === "/" ||
+    pathname === "/search" ||
+    pathname === `/detail/${hotelId}`;
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <Hero />
-      {!login && !register && !edit && !add && (
+      {paths && (
         <div className="container mx-auto px-4">
           <SearchBar />
         </div>
