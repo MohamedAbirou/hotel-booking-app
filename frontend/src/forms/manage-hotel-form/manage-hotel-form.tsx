@@ -3,7 +3,7 @@ import { DetailsSection } from "./details-section";
 import { TypeSection } from "./type-section";
 import { FacilitySection } from "./facility-section";
 import { GuestSection } from "./guest-section";
-import { HotelType } from "../../../../backend/src/shared/types";
+import { BookingType, HotelType } from "../../../../backend/src/shared/types";
 import { useEffect } from "react";
 import { ImagesSection } from "./images-section";
 
@@ -20,6 +20,7 @@ export type HotelFormData = {
   imageUrls: string[];
   adultCount: number;
   childCount: number;
+  bookings: BookingType[];
 };
 
 type Props = {

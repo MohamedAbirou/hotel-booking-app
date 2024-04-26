@@ -13,7 +13,7 @@ const MyHotels = () => {
     apiClient.fetchMyHotels,
     {
       onError: () => {
-        showToast({ message: "", type: "ERROR" });
+        showToast({ message: "Error fetching hotels", type: "ERROR" });
       },
     }
   );

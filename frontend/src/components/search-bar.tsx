@@ -28,6 +28,24 @@ export const SearchBar = () => {
     navigate("/search");
   };
 
+  const clearFields = (event: React.MouseEvent) => {
+    event.preventDefault();
+
+    setDestination("");
+    setCheckIn(new Date());
+    setCheckOut(new Date(new Date().getTime() + 1000 * 60 * 60 * 24));
+    setAdultCount(1);
+    setChildCount(0);
+
+    search.clearSearchValues(
+      destination,
+      checkIn,
+      checkOut,
+      adultCount,
+      childCount
+    );
+  };
+
   const minDate = new Date();
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
@@ -98,7 +116,7 @@ export const SearchBar = () => {
           endDate={checkOut}
           minDate={minDate}
           maxDate={maxDate}
-          placeholderText="Check-in Date"
+          placeholderText="Check-out Date"
           className="min-w-full bg-white p-2 focus:outline-none"
           wrapperClassName="min-w-full"
           dateFormat={"dd-MM-YYYY"}
@@ -108,7 +126,10 @@ export const SearchBar = () => {
         <button className="w-2/3 bg-blue-600 text-white h-full px-2 py-2 rounded font-semibold text-lg hover:bg-blue-500">
           Search
         </button>
-        <button className="w-1/3 bg-red-600 text-white h-full px-2 py-2 rounded font-semibold text-lg hover:bg-red-500">
+        <button
+          onClick={clearFields}
+          className="w-1/3 bg-red-600 text-white h-full px-2 py-2 rounded font-semibold text-lg hover:bg-red-500"
+        >
           Clear
         </button>
       </div>

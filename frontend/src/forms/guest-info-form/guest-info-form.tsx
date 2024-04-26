@@ -3,8 +3,12 @@ import DatePicker from "react-datepicker";
 import { useSearchContext } from "../../contexts/search-context";
 import { useAppContext } from "../../contexts/app-context";
 import { useLocation, useNavigate } from "react-router-dom";
+import { HotelType } from "../../../../backend/src/shared/types";
+import { useMemo } from "react";
+import { eachDayOfInterval } from "date-fns";
 
 type Props = {
+  hotel: HotelType;
   hotelId: string;
   pricePerNight: number;
 };
@@ -16,11 +20,28 @@ type GuestInfoFormData = {
   childCount: number;
 };
 
-export const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
+export const GuestInfoForm = ({ hotel, hotelId, pricePerNight }: Props) => {
   const { isLoggedIn } = useAppContext();
   const search = useSearchContext();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const bookings = hotel.bookings;
+
+  const disabledDates = useMemo(() => {
+    let dates: Date[] = [];
+
+    bookings.forEach((booking) => {
+      const range = eachDayOfInterval({
+        start: new Date(booking.checkIn),
+        end: new Date(booking.checkOut),
+      });
+
+      dates = [...dates, ...range];
+    });
+
+    return dates;
+  }, [bookings]);
 
   const {
     watch,
@@ -85,9 +106,10 @@ export const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
               minDate={minDate}
               maxDate={maxDate}
               placeholderText="Check-in Date"
-              className="min-w-full bg-white p-2 rounded-md focus:outline-none"
+              className="min-w-full bg-white p-2 rounded-md focus:outline-none disabled:bg-gray-500"
               wrapperClassName="min-w-full"
               dateFormat={"dd-MM-YYYY"}
+              excludeDates={disabledDates}
             />
           </div>
           <div>
@@ -97,12 +119,15 @@ export const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
               selectsStart
               startDate={checkIn}
               endDate={checkOut}
-              minDate={minDate}
+              minDate={
+                checkIn && new Date(checkIn.getTime() + 1000 * 60 * 60 * 24)
+              }
               maxDate={maxDate}
               placeholderText="Check-out Date"
               className="min-w-full bg-white p-2 rounded-md focus:outline-none"
               wrapperClassName="min-w-full"
               dateFormat={"dd-MM-YYYY"}
+              excludeDates={disabledDates}
             />
           </div>
           <div className="flex bg-white px-2 gap-2 rounded-md">

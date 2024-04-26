@@ -15,6 +15,7 @@ import "../config/firebaseConfig";
 import { HotelType } from "../shared/types";
 
 const router = express.Router();
+
 const storage = getStorage();
 const upload = multer({
   storage: multer.memoryStorage(),

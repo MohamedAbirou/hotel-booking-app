@@ -23,8 +23,8 @@ const Details = () => {
     <div className="space-y-10">
       <div>
         <span className="flex">
-          {Array.from({ length: hotel.starRating }).map(() => (
-            <AiFillStar className="fill-yellow-400" />
+          {Array.from({ length: hotel.starRating }).map((_, index) => (
+            <AiFillStar key={index} className="fill-yellow-400" />
           ))}
         </span>
         <h1 className="text-3xl font-bold">{hotel.name}</h1>
@@ -44,7 +44,10 @@ const Details = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {hotel.facilities.map((facility) => (
-          <div className="border border-slate-300 rounded-md text-center p-3">
+          <div
+            key={facility}
+            className="border border-slate-300 rounded-md text-center p-3"
+          >
             {facility}
           </div>
         ))}
@@ -54,6 +57,7 @@ const Details = () => {
         <div className="whitespace-pre-line">{hotel.description}</div>
         <div className="h-fit">
           <GuestInfoForm
+            hotel={hotel}
             hotelId={hotel._id}
             pricePerNight={hotel.pricePerNight}
           />

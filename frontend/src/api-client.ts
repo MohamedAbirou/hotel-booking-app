@@ -3,11 +3,26 @@ import { RegisterFormData } from "./pages/register";
 import {
   HotelSearchResponseType,
   HotelType,
+  PaymentIntentResponse,
+  UserType,
 } from "../../backend/src/shared/types";
+import { BookingFormData } from "./forms/booking-form/booking-form";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 //* Authentication
+export const FetchCurrentUser = async (): Promise<UserType> => {
+  const response = await fetch(`${API_BASE_URL}/api/users/me`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch current user");
+  }
+
+  return response.json();
+};
+
 export const register = async (formData: RegisterFormData) => {
   const response = await fetch(`${API_BASE_URL}/api/users/register`, {
     method: "POST",
@@ -80,6 +95,17 @@ export const checkSession = async () => {
 
 //* Hotels
 
+// Get all hotels
+export const fetchHotels = async (): Promise<HotelType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/hotels`);
+
+  if (!response.ok) {
+    throw new Error("Error fetching hotels");
+  }
+
+  return response.json();
+};
+
 // Add a new hotel
 export const addMyHotel = async (hotelFormData: FormData) => {
   const response = await fetch(`${API_BASE_URL}/api/my-hotels`, {
@@ -95,20 +121,20 @@ export const addMyHotel = async (hotelFormData: FormData) => {
   return response.json();
 };
 
-// Get all hotels
+// Get all hotels created by user
 export const fetchMyHotels = async (): Promise<HotelType[]> => {
   const response = await fetch(`${API_BASE_URL}/api/my-hotels`, {
     credentials: "include",
   });
 
   if (!response.ok) {
-    throw new Error("Error fetching hotels");
+    throw new Error("Error fetching hotels created by user");
   }
 
   return response.json();
 };
 
-// Get a single hotel
+// Get a single hotel created by user
 export const fetchMyHotelById = async (hotelId: string): Promise<HotelType> => {
   const response = await fetch(`${API_BASE_URL}/api/my-hotels/${hotelId}`, {
     credentials: "include",
@@ -192,4 +218,61 @@ export const fetchHotelById = async (hotelId: string): Promise<HotelType> => {
   }
 
   return response.json();
+};
+
+//* Bookings
+
+export const fetchBookingsByUser = async (): Promise<HotelType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/my-bookings`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Error fetching bookings");
+  }
+
+  return response.json();
+};
+
+//* Stripe
+
+export const createPaymentIntent = async (
+  hotelId: string,
+  numberOfNights: string
+): Promise<PaymentIntentResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/hotels/${hotelId}/bookings/payment-intent`,
+    {
+      credentials: "include",
+      method: "POST",
+      body: JSON.stringify({ numberOfNights }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error fetching payment intent");
+  }
+
+  return response.json();
+};
+
+export const createRoomBooking = async (formData: BookingFormData) => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/hotels/${formData.hotelId}/bookings`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(formData),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error booking room");
+  }
 };

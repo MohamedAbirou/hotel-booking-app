@@ -47,3 +47,43 @@ test("Should show hotel detail", async ({ page }) => {
 
   await expect(page.getByRole("button", { name: "Book now" })).toBeVisible();
 });
+
+test("Should book hotel", async ({ page }) => {
+  await page.goto(`${UI_URL}`);
+
+  await page.getByPlaceholder("Where are you going?").fill("Dublin");
+
+  const date = new Date();
+  date.setDate(date.getDate() + 3);
+  const formattedDate = date.toISOString().split("T")[0];
+
+  await page.getByPlaceholder("Check-out Date").fill(formattedDate);
+
+  await page.getByRole("button", { name: "Search" }).click();
+
+  await page.getByText("Dublin Skylon Hotel").first().click();
+
+  await page.getByRole("button", { name: "Book now" }).click();
+
+  await expect(page.getByText("Total Cost: $540.00")).toBeVisible();
+
+  const stripeFrame = page.frameLocator("iframe").first();
+
+  await stripeFrame.locator("[placeholder='Card number']").isVisible();
+  await stripeFrame
+    .locator("[placeholder='Card number']")
+    .fill("4242424242424242");
+
+  await stripeFrame.locator("[placeholder='MM / YY']").isVisible();
+  await stripeFrame.locator("[placeholder='MM / YY']").fill("44/44");
+
+  await stripeFrame.locator("[placeholder='CVC']").isVisible();
+  await stripeFrame.locator("[placeholder='CVC']").fill("444");
+
+  await stripeFrame.locator("[placeholder='ZIP']").isVisible();
+  await stripeFrame.locator("[placeholder='ZIP']").fill("44444");
+
+  await page.getByRole("button", { name: "Confirm Booking" }).click();
+
+  await expect(page.getByText("Room Booked successfully")).toBeVisible();
+});
