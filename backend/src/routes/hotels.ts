@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
-import Hotel from "../models/hotel";
 import { BookingType, HotelSearchResponseType } from "../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import { checkSession } from "../middleware/auth";
+import Hotel from "../models/hotel";
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
 
@@ -98,11 +98,9 @@ router.post(
   checkSession,
   async (req: Request, res: Response) => {
     const { numberOfNights } = req.body;
-
     const hotelId = req.params.hotelId;
 
     const hotel = await Hotel.findById(hotelId);
-
     if (!hotel) {
       return res.status(400).json({ message: "Hotel not found" });
     }
@@ -119,9 +117,7 @@ router.post(
     });
 
     if (!paymentIntent.client_secret) {
-      return res
-        .status(500)
-        .json({ message: "Error creating payment intent!" });
+      return res.status(500).json({ message: "Error creating payment intent" });
     }
 
     const response = {
@@ -146,14 +142,14 @@ router.post(
       );
 
       if (!paymentIntent) {
-        return res.status(400).json({ message: "Payment intent not found!" });
+        return res.status(400).json({ message: "payment intent not found" });
       }
 
       if (
         paymentIntent.metadata.hotelId !== req.params.hotelId ||
         paymentIntent.metadata.userId !== req.userId
       ) {
-        res.status(400).json({ message: "Payment intent mismatch!" });
+        return res.status(400).json({ message: "payment intent mismatch" });
       }
 
       if (paymentIntent.status !== "succeeded") {
@@ -175,19 +171,17 @@ router.post(
       );
 
       if (!hotel) {
-        return res.status(400).json({ message: "Hotel not found!" });
+        return res.status(400).json({ message: "hotel not found" });
       }
 
       await hotel.save();
       res.status(200).send();
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Something went wrong!" });
+      res.status(500).json({ message: "something went wrong" });
     }
   }
 );
-
-export default router;
 
 const constructSearchQuery = (queryParams: any) => {
   let constructedQuery: any = {};
@@ -243,3 +237,5 @@ const constructSearchQuery = (queryParams: any) => {
 
   return constructedQuery;
 };
+
+export default router;

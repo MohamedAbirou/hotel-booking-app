@@ -46,7 +46,7 @@ const Booking = () => {
   );
 
   const { data: currentUser } = useQuery(
-    "fetchCurrentUser",
+    "FetchCurrentUser",
     apiClient.FetchCurrentUser
   );
 

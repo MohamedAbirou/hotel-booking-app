@@ -8,6 +8,7 @@ import { BiHotel, BiMoney, BiStar } from "react-icons/bi";
 
 const MyHotels = () => {
   const { showToast } = useAppContext();
+
   const { data: hotelData } = useQuery(
     "fetchMyHotels",
     apiClient.fetchMyHotels,

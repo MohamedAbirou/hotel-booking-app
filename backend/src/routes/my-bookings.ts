@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { checkSession } from "../middleware/auth";
-import Hotel from "../models/hotel";
 import { HotelType } from "../shared/types";
+import Hotel from "../models/hotel";
 
 const router = express.Router();
 

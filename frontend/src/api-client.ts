@@ -220,20 +220,6 @@ export const fetchHotelById = async (hotelId: string): Promise<HotelType> => {
   return response.json();
 };
 
-//* Bookings
-
-export const fetchBookingsByUser = async (): Promise<HotelType[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/my-bookings`, {
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    throw new Error("Error fetching bookings");
-  }
-
-  return response.json();
-};
-
 //* Stripe
 
 export const createPaymentIntent = async (
@@ -275,4 +261,18 @@ export const createRoomBooking = async (formData: BookingFormData) => {
   if (!response.ok) {
     throw new Error("Error booking room");
   }
+};
+
+//* Bookings
+
+export const fetchBookingsByUser = async (): Promise<HotelType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/my-bookings`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Error fetching bookings");
+  }
+
+  return response.json();
 };

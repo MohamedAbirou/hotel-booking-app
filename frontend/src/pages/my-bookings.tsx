@@ -5,6 +5,7 @@ import { useAppContext } from "../contexts/app-context";
 
 const MyBookings = () => {
   const { showToast } = useAppContext();
+
   const { data: hotels } = useQuery(
     "fetchBookingsByUser",
     apiClient.fetchBookingsByUser,

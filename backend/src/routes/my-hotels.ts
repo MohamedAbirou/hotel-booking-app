@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
-import Hotel from "../models/hotel"; // Import your Hotel model
 import { checkSession } from "../middleware/auth";
 import { createHotelValidationSchema } from "../utils/validationSchemas";
 import { checkSchema } from "express-validator";
@@ -13,6 +12,7 @@ import {
 } from "firebase/storage";
 import "../config/firebaseConfig";
 import { HotelType } from "../shared/types";
+import Hotel from "../models/hotel";
 
 const router = express.Router();
 

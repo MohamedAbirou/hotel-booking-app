@@ -11,6 +11,7 @@ import Details from "./pages/details";
 import Booking from "./pages/booking";
 import MyBookings from "./pages/my-bookings";
 import Home from "./pages/home";
+import { Unauthorized } from "./components/unauthorized";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -102,7 +103,7 @@ function App() {
             />
           </>
         )}
-        <Route path="*" element={<>Navigate to</>} />
+        <Route path="*" element={<Unauthorized />} />
       </Routes>
     </Router>
   );

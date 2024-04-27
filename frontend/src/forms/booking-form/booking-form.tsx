@@ -6,7 +6,7 @@ import {
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement } from "@stripe/stripe-js";
 import { useSearchContext } from "../../contexts/search-context";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "react-query";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/app-context";
@@ -25,11 +25,12 @@ export type BookingFormData = {
   checkIn: string;
   checkOut: string;
   hotelId: string;
-  totalCost: number;
   paymentIntentId: string;
+  totalCost: number;
 };
 
 export const BookingForm = ({ currentUser, paymentIntent }: Props) => {
+  const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
   const search = useSearchContext();
@@ -40,10 +41,10 @@ export const BookingForm = ({ currentUser, paymentIntent }: Props) => {
     apiClient.createRoomBooking,
     {
       onSuccess: () => {
-        showToast({ message: "Room Booked successfully", type: "SUCCESS" });
+        showToast({ message: "Room Booked Successfully!", type: "SUCCESS" });
       },
       onError: () => {
-        showToast({ message: "Failed to book a room!", type: "ERROR" });
+        showToast({ message: "Error saving booking", type: "ERROR" });
       },
     }
   );
@@ -57,7 +58,7 @@ export const BookingForm = ({ currentUser, paymentIntent }: Props) => {
       childCount: search.childCount,
       checkIn: search.checkIn.toISOString(),
       checkOut: search.checkOut.toISOString(),
-      hotelId,
+      hotelId: hotelId,
       totalCost: paymentIntent.totalCost,
       paymentIntentId: paymentIntent.paymentIntentId,
     },
@@ -75,6 +76,10 @@ export const BookingForm = ({ currentUser, paymentIntent }: Props) => {
 
     if (result.paymentIntent?.status === "succeeded") {
       bookRoom({ ...formData, paymentIntentId: result.paymentIntent.id });
+
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
     }
   };
 
