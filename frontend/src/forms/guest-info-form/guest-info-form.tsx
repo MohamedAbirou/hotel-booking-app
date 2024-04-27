@@ -3,8 +3,12 @@ import DatePicker from "react-datepicker";
 import { useSearchContext } from "../../contexts/search-context";
 import { useAppContext } from "../../contexts/app-context";
 import { useLocation, useNavigate } from "react-router-dom";
+import { HotelType } from "../../../../backend/src/shared/types";
+import { useMemo } from "react";
+import { eachDayOfInterval } from "date-fns";
 
 type Props = {
+  hotel: HotelType;
   hotelId: string;
   pricePerNight: number;
 };
@@ -16,7 +20,7 @@ type GuestInfoFormData = {
   childCount: number;
 };
 
-export const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
+export const GuestInfoForm = ({ hotel, hotelId, pricePerNight }: Props) => {
   const { isLoggedIn } = useAppContext();
   const search = useSearchContext();
   const navigate = useNavigate();
@@ -39,6 +43,23 @@ export const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
 
   const checkIn = watch("checkIn");
   const checkOut = watch("checkOut");
+
+  const bookings = hotel.bookings;
+
+  const disabledDates = useMemo(() => {
+    let dates: Date[] = [];
+
+    bookings.forEach((booking) => {
+      const range = eachDayOfInterval({
+        start: new Date(booking.checkIn),
+        end: new Date(booking.checkOut),
+      });
+
+      dates = [...dates, ...range];
+    });
+
+    return dates;
+  }, [bookings]);
 
   const minDate = new Date();
   const maxDate = new Date();
@@ -66,6 +87,10 @@ export const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
     navigate(`/hotel/${hotelId}/booking`);
   };
 
+  const nights = Math.ceil(
+    Math.abs(checkIn.getTime() - checkOut.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
   return (
     <div className="flex flex-col p-4 bg-blue-200 rounded-md gap-4">
       <h3 className="text-md font-bold">${pricePerNight}</h3>
@@ -88,6 +113,7 @@ export const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
               className="min-w-full bg-white p-2 rounded-md focus:outline-none disabled:bg-gray-500"
               wrapperClassName="min-w-full"
               dateFormat={"dd-MM-YYYY"}
+              excludeDates={disabledDates}
             />
           </div>
           <div>
@@ -105,6 +131,7 @@ export const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
               className="min-w-full bg-white p-2 rounded-md focus:outline-none"
               wrapperClassName="min-w-full"
               dateFormat={"dd-MM-YYYY"}
+              excludeDates={disabledDates}
             />
           </div>
           <div className="flex bg-white px-2 gap-2 rounded-md">
@@ -146,7 +173,10 @@ export const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
             )}
           </div>
           {isLoggedIn ? (
-            <button className="bg-blue-600 text-white h-full p-2 rounded-md font-semibold hover:bg-blue-500 text-lg">
+            <button
+              disabled={nights === 0}
+              className="bg-blue-600 text-white h-full p-2 rounded-md font-semibold hover:bg-blue-500 text-lg disabled:cursor-not-allowed disabled:bg-slate-400"
+            >
               Book Now
             </button>
           ) : (

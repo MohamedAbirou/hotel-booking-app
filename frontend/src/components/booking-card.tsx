@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { HotelType } from "../../../backend/src/shared/types";
 
 type Props = {
@@ -6,10 +7,13 @@ type Props = {
 
 export const BookingCard = ({ hotel }: Props) => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_3fr] border border-slate-300 rounded-lg p-8 gap-5">
+    <Link
+      to={`/detail/${hotel._id}`}
+      className="grid grid-cols-1 lg:grid-cols-[1fr_3fr] border border-slate-300 rounded-lg p-8 gap-5"
+    >
       <div className="w-full h-[250px]">
         <img
-          src={hotel.imageUrls[0]}
+          src={hotel.imageUrls[5]}
           className="w-full h-full object-cover object-center"
         />
       </div>
@@ -38,6 +42,6 @@ export const BookingCard = ({ hotel }: Props) => {
           </div>
         ))}
       </div>
-    </div>
+    </Link>
   );
 };

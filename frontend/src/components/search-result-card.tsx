@@ -8,7 +8,10 @@ type Props = {
 
 export const SearchResultCard = ({ hotel }: Props) => {
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-[2fr_3fr] border border-slate-300 rounded-lg p-8 gap-8">
+    <Link
+      to={`/detail/${hotel._id}`}
+      className="grid grid-cols-1 xl:grid-cols-[2fr_3fr] border border-slate-300 rounded-lg p-8 gap-8"
+    >
       <div className="w-full h-[300px]">
         <img
           src={hotel.imageUrls[5]}
@@ -28,12 +31,7 @@ export const SearchResultCard = ({ hotel }: Props) => {
             </span>
             <span className="ml-1 text-sm">{hotel.type}</span>
           </div>
-          <Link
-            to={`/detail/${hotel._id}`}
-            className="text-xl font-bold cursor-pointer"
-          >
-            {hotel.name}
-          </Link>
+          <div className="text-xl font-bold cursor-pointer">{hotel.name}</div>
         </div>
 
         <div>
@@ -66,6 +64,6 @@ export const SearchResultCard = ({ hotel }: Props) => {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
